@@ -103,17 +103,18 @@ public class MessageDAO
             return null;
         }
         try
-        {
+        { 
             PreparedStatement preparedStatement;
-            ResultSet resultSet;
+            Message message = getMessage(messageId);
+            int result;
 
             preparedStatement = connection.prepareStatement("delete from message where message_id = ?;");
             preparedStatement.setInt(1, messageId);
-            resultSet = preparedStatement.executeQuery();
+            result = preparedStatement.executeUpdate();
 
-            if (resultSet.next())
+            if (result != 0)
             {
-                return new Message(resultSet.getInt("message_id"), resultSet.getInt("posted_by"), resultSet.getString("message_text"), resultSet.getLong("time_posted_epoch"));
+                return message;
             }
         }
         catch(SQLException e)
