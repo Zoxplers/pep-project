@@ -125,15 +125,8 @@ public class SocialMediaController
 
     private void patchMessageHandler(Context context) throws JsonProcessingException
     {
-        /*
         ObjectMapper mapper = new ObjectMapper();
-        if(messageService.deleteMessage(Integer.parseInt(context.pathParam("message_id"))) == null)
-        {
-            context.status(HttpStatus.BAD_REQUEST);
-            return;
-        }
-        Message message = messageService.addMessage(mapper.readValue(context.body(), Message.class));
-        */
+        context.json(messageService.patchMessage(Integer.parseInt(context.pathParam("message_id")), mapper.readValue(context.body(), Message.class).getMessage_text()));
     }
 
     private void getAccountMessagesHandler(Context context)

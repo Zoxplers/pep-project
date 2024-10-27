@@ -123,4 +123,34 @@ public class MessageDAO
         }
         return null;
     }
+
+    public Message updateMessage(int messageId, String messageText)
+    {
+        Connection connection = ConnectionUtil.getConnection();
+        if(connection == null)
+        {
+            return null;
+        }
+        try
+        {
+            PreparedStatement preparedStatement;
+            Message message = getMessage(messageId);
+            int result;
+
+            preparedStatement = connection.prepareStatement("update message set message_text = ? where message_id = ?;");
+            preparedStatement.setString(1, messageText);
+            preparedStatement.setInt(2, messageId);
+            result = preparedStatement.executeUpdate();
+
+            if (result != 0)
+            {
+                return message;
+            }
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 }
