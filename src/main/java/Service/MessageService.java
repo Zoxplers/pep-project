@@ -44,6 +44,10 @@ public class MessageService
 
     public Message patchMessage(int messageId, String messageText)
     {
+        if(messageText.isEmpty())
+        {
+            return null;
+        }
         return messageDAO.updateMessage(messageId, messageText);
     }
 }

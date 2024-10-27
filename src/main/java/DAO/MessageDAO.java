@@ -134,7 +134,6 @@ public class MessageDAO
         try
         {
             PreparedStatement preparedStatement;
-            Message message = getMessage(messageId);
             int result;
 
             preparedStatement = connection.prepareStatement("update message set message_text = ? where message_id = ?;");
@@ -144,7 +143,7 @@ public class MessageDAO
 
             if (result != 0)
             {
-                return message;
+                return getMessage(messageId);
             }
         }
         catch(SQLException e)
