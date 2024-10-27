@@ -5,6 +5,8 @@ import Model.Message;
 import Util.ConnectionUtil;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessageDAO
 {
@@ -32,6 +34,56 @@ public class MessageDAO
             {
                 return new Message(resultSet.getInt(1), message.getPosted_by(), message.getMessage_text(), message.getTime_posted_epoch());
             }
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public List<Message> getAllMessages()
+    {
+        Connection connection = ConnectionUtil.getConnection();
+        List<Message> messages = new ArrayList<>();
+        if(connection == null)
+        {
+            return null;
+        }
+        try
+        {
+            PreparedStatement preparedStatement = connection.prepareStatement("select * from message");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next())
+            {
+                Message message = new Message(resultSet.getInt("message_id"), resultSet.getInt("posted_by"), resultSet.getString("message_text"), resultSet.getLong("time_posted_epoch"));
+                messages.add(message);
+            }
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return messages;
+    }
+
+    public Message getMessage(int messageId)
+    {
+        Connection connection = ConnectionUtil.getConnection();
+        if(connection == null)
+        {
+            return null;
+        }
+        try
+        {
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+
+            preparedStatement = connection.prepareStatement("select * from account where message_id = ?;");
+            preparedStatement.setInt(1, messageId);
+            resultSet = preparedStatement.executeQuery();
+
+            return new Message(resultSet.getInt("message_id"), resultSet.getInt("posted_by"), resultSet.getString("message_text"), resultSet.getLong("time_posted_epoch"));
         }
         catch(SQLException e)
         {

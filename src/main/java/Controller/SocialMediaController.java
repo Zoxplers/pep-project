@@ -10,6 +10,8 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
 
+import java.util.List;
+
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
  * found in readme.md as well as the test cases. You should
@@ -37,6 +39,8 @@ public class SocialMediaController
         app.post("/register", this::registerHandler);
         app.post("/login", this::loginHandler);
         app.post("/messages", this::postMessagesHandler);
+        app.get("/messages", this::getMessagesHandler);
+        app.get("/messages/{message_id}", this::getMessageHandler);
         return app;
     }
 
@@ -82,5 +86,16 @@ public class SocialMediaController
         {
             context.status(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    private void getMessagesHandler(Context context)
+    {
+        List<Message> messages = messageService.getAllMessages();
+        context.json(messages);
+    }
+
+    private void getMessageHandler(Context context)
+    {
+        context.result(messageService.getMessageText(Integer.parseInt(context.pathParam("message_id"))));
     }
 }
