@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.Account;
+import Model.Message;
 import Service.AccountService;
 import Service.MessageService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,36 +36,51 @@ public class SocialMediaController
         Javalin app = Javalin.create();
         app.post("/register", this::registerHandler);
         app.post("/login", this::loginHandler);
+        app.post("/messages", this::postMessagesHandler);
         return app;
     }
 
-    private void registerHandler(Context ctx) throws JsonProcessingException
+    private void registerHandler(Context context) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
-        Account account = accountService.addAccount(mapper.readValue(ctx.body(), Account.class));
+        Account account = accountService.addAccount(mapper.readValue(context.body(), Account.class));
         if(account != null)
         {
-            ctx.json(mapper.writeValueAsString(account));
+            context.json(mapper.writeValueAsString(account));
         }
         else
         {
-            ctx.status(HttpStatus.BAD_REQUEST);
+            context.status(HttpStatus.BAD_REQUEST);
         }
     }
 
-    private void loginHandler(Context ctx) throws JsonProcessingException
+    private void loginHandler(Context context) throws JsonProcessingException
     {
         ObjectMapper mapper = new ObjectMapper();
-        Account account = mapper.readValue(ctx.body(), Account.class);
+        Account account = mapper.readValue(context.body(), Account.class);
         account = accountService.attemptLogin(account.getUsername(), account.getPassword());
 
         if(account != null)
         {
-            ctx.json(mapper.writeValueAsString(account));
+            context.json(mapper.writeValueAsString(account));
         }
         else
         {
-            ctx.status(HttpStatus.UNAUTHORIZED);
+            context.status(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    private void postMessagesHandler(Context context) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        Message message = messageService.addMessage(mapper.readValue(context.body(), Message.class));
+        if(message != null)
+        {
+            context.json(mapper.writeValueAsString(message));
+        }
+        else
+        {
+            context.status(HttpStatus.BAD_REQUEST);
         }
     }
 }

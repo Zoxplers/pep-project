@@ -11,30 +11,6 @@ import java.sql.Statement;
 
 public class AccountDAO
 {
-    public Account getAccountByID(int accountId)
-    {
-        Connection connection = ConnectionUtil.getConnection();
-        if(connection == null)
-        {
-            return null;
-        }
-        try
-        {
-            PreparedStatement preparedStatement;
-            ResultSet resultSet;
-
-            preparedStatement = connection.prepareStatement("select * from account where account_id = ?;");
-            preparedStatement.setInt(1, accountId);
-            resultSet = preparedStatement.executeQuery();
-
-            return new Account(resultSet.getInt("account_id"), resultSet.getString("username"), resultSet.getString("password"));
-        }
-        catch(SQLException e)
-        {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
 
     public Account insertAccount(Account account)
     {
@@ -88,6 +64,31 @@ public class AccountDAO
             {
                 return new Account(resultSet.getInt("account_id"), username, password);
             }
+        }
+        catch(SQLException e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public Account findAccount(int accountId)
+    {
+        Connection connection = ConnectionUtil.getConnection();
+        if(connection == null)
+        {
+            return null;
+        }
+        try
+        {
+            PreparedStatement preparedStatement;
+            ResultSet resultSet;
+
+            preparedStatement = connection.prepareStatement("select * from account where account_id = ?;");
+            preparedStatement.setInt(1, accountId);
+            resultSet = preparedStatement.executeQuery();
+
+            return new Account(resultSet.getInt("account_id"), resultSet.getString("username"), resultSet.getString("password"));
         }
         catch(SQLException e)
         {
