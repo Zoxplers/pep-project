@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
+import io.javalin.http.HttpStatus;
 
 /**
  * TODO: You will need to write your own endpoints and handlers for your controller. The endpoints you will need can be
@@ -33,6 +34,7 @@ public class SocialMediaController
     {
         Javalin app = Javalin.create();
         app.post("/register", this::registerHandler);
+        app.post("/login", this::loginHandler);
         return app;
     }
 
@@ -46,7 +48,23 @@ public class SocialMediaController
         }
         else
         {
-            ctx.status(400);
+            ctx.status(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private void loginHandler(Context ctx) throws JsonProcessingException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        Account account = mapper.readValue(ctx.body(), Account.class);
+        account = accountService.attemptLogin(account.getUsername(), account.getPassword());
+
+        if(account != null)
+        {
+            ctx.json(mapper.writeValueAsString(account));
+        }
+        else
+        {
+            ctx.status(HttpStatus.UNAUTHORIZED);
         }
     }
 }
