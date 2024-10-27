@@ -79,11 +79,14 @@ public class MessageDAO
             PreparedStatement preparedStatement;
             ResultSet resultSet;
 
-            preparedStatement = connection.prepareStatement("select * from account where message_id = ?;");
+            preparedStatement = connection.prepareStatement("select * from message where message_id = ?;");
             preparedStatement.setInt(1, messageId);
             resultSet = preparedStatement.executeQuery();
 
-            return new Message(resultSet.getInt("message_id"), resultSet.getInt("posted_by"), resultSet.getString("message_text"), resultSet.getLong("time_posted_epoch"));
+            if (resultSet.next())
+            {
+                return new Message(resultSet.getInt("message_id"), resultSet.getInt("posted_by"), resultSet.getString("message_text"), resultSet.getLong("time_posted_epoch"));
+            }
         }
         catch(SQLException e)
         {

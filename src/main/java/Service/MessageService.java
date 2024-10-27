@@ -32,8 +32,8 @@ public class MessageService
         return messageDAO.getAllMessages();
     }
 
-    public String getMessageText(int messageId)
+    public Message getMessage(int messageId)
     {
-        return messageDAO.getMessage(messageId).getMessage_text();
+        return messageDAO.getMessage(messageId);
     }
 }
